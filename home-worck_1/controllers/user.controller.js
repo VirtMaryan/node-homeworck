@@ -7,8 +7,14 @@ module.exports = {
 
   getUserById: (req, res) => {
     const { userIndex } = req.params;
+    const user = DB.usersArr[userIndex];
 
-    res.json(DB.usersArr[userIndex]);
+    if (!user) {
+      res.status(404).json(`User with id ${userIndex} not found`);
+      return;
+    };
+
+    res.json(user);
   },
 
   createUser: (req, res) => {
@@ -19,6 +25,12 @@ module.exports = {
 
   updateUser: (req, res) => {
     const { userIndex } = req.params;
+    const user = DB.usersArr[userIndex];
+
+    if (!user) {
+      res.status(404).json(`User with id ${userIndex} not found`);
+      return;
+    };
 
     DB.usersArr.splice(userIndex, 1, req.body);
 
@@ -27,6 +39,12 @@ module.exports = {
 
   deleteUser: (req, res) => {
     const { userIndex } = req.params;
+    const user = DB.usersArr[userIndex];
+
+    if (!user) {
+      res.status(404).json(`User with id ${userIndex} not found`);
+      return;
+    };
 
     DB.usersArr.splice(userIndex, 1);
 

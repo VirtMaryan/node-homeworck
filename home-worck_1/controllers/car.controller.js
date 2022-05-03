@@ -7,8 +7,14 @@ module.exports = {
 
   getCarById: (req, res) => {
     const { carIndex } = req.params;
+    const car = DB.carsArr[carIndex];
 
-    res.json(DB.carsArr[carIndex]);
+    if (!car) {
+      res.status(404).json(`Car with id ${carIndex} not found`);
+      return;
+    };
+
+    res.json(car);
   },
 
   createCar: (req, res) => {
@@ -19,6 +25,13 @@ module.exports = {
 
   updateCar: (req, res) => {
     const { carIndex } = req.params;
+    const car = DB.carsArr[carIndex];
+
+    if (!car) {
+      res.status(404).json(`Car with id ${carIndex} not found`);
+      return;
+    };
+
     DB.carsArr.splice(carIndex, 1, req.body);
 
     res.json(DB.carsArr);
@@ -26,6 +39,12 @@ module.exports = {
 
   deleteCar: (req, res) => {
     const { carIndex } = req.params;
+    const car = DB.carsArr[carIndex];
+
+    if (!car) {
+      res.status(404).json(`Car with id ${carIndex} not found`);
+      return;
+    };
 
     DB.carsArr.splice(carIndex, 1);
 
