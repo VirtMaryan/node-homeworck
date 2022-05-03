@@ -1,41 +1,26 @@
 const express = require('express');
 const { engine } = require('express-handlebars');
-const DB = require('./dataBase/users')
+
+const { PORT } = require('./config/config');
+const carRouter = require('./routes/car.routers');
+const logoutRouter = require('./routes/logout.router');
+const userRouter = require('./routes/user.router');
+const welcomeRouter = require('./routes/welcomepage.router');
 
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.engine('.hbs', engine({ defaultLayout: false }));
 app.set('view engine', '.hbs');
 app.set('views', './static');
 
-app.get('/', (req, res) => {
-  res.render('welcome')
-});
+app.use('/', welcomeRouter);
+app.use('/cars', carRouter);
+app.use('/logout', logoutRouter);
+app.use('/users', userRouter);
 
-app.get('/users', (req, res) => {
-  res.json(DB.usersArr)
-});
-
-app.get('/users/:userIndex', (req, res) => {
-  const { userIndex } = req.params;
-
-  res.json(DB.usersArr[userIndex])
-})
-
-app.get('/cars', (req, res) => {
-  res.json(DB.carsArr)
-});
-
-app.get('/cars/:carIndex', (req, res) => {
-  const { carIndex } = req.params;
-
-  res.json(DB.carsArr[carIndex])
-});
-
-app.get('/logout', (req, res) => {
-  res.render('logout')
-});
-
-app.listen(5000, () => {
-  console.log('App listen port 5000');
+app.listen(PORT, () => {
+  console.log(`App listen ${PORT} port `);
 });
