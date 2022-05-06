@@ -6,12 +6,12 @@ const carRouter = Router();
 
 carRouter.get('/', carController.getAllCars);
 
-carRouter.get('/:carIndex', carController.getCarById);
+carRouter.get('/:carId', carController.getCarById);
 
 carRouter.post('/', carController.createCar);
 
-carRouter.put('/:carIndex', carController.updateCar);
+carRouter.put('/:carId', carController.updateCar);
 
-carRouter.delete('/:carIndex', carController.deleteCar);
+carRouter.delete('/:carId', carController.deleteCar);
 
 module.exports = carRouter;

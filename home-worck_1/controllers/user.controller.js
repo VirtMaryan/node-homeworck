@@ -1,53 +1,56 @@
-const DB = require('../dataBase/users');
+const { modelUser } = require('../dataBase/models');
 
 module.exports = {
-  getAllUsers: (req, res) => {
-    res.json(DB.usersArr);
+  getAllUsers: async (req, res) => {
+    const users = await modelUser.find();
+
+    res.json(users);
   },
 
-  getUserById: (req, res) => {
-    const { userIndex } = req.params;
-    const user = DB.usersArr[userIndex];
+  getUserById: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await modelUser.findById(userId);
 
-    if (!user) {
-      res.status(404).json(`User with id ${userIndex} not found`);
-      return;
-    };
-
-    res.json(user);
+      res.json(user);
+    } catch (e) {
+      res.json(e)
+    }
   },
 
-  createUser: (req, res) => {
-    DB.usersArr.push(req.body);
+  createUser: async (req, res) => {
+    try {
+      const createUser = await modelUser.create(req.body);
 
-    res.json(DB.usersArr);
+      res.status(201).json(createUser);
+    } catch (e) {
+      res.json(e);
+    }
   },
 
-  updateUser: (req, res) => {
-    const { userIndex } = req.params;
-    const user = DB.usersArr[userIndex];
+  updateUser: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await modelUser.findOneAndUpdate(
+        userId,
+        { age: 202 },
+        { new: true }
+      );
 
-    if (!user) {
-      res.status(404).json(`User with id ${userIndex} not found`);
-      return;
-    };
-
-    DB.usersArr.splice(userIndex, 1, req.body);
-
-    res.json(DB.usersArr);
+      res.json(user);
+    } catch (e) {
+      res.json(e)
+    }
   },
 
-  deleteUser: (req, res) => {
-    const { userIndex } = req.params;
-    const user = DB.usersArr[userIndex];
+  deleteUser: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await modelUser.findByIdAndDelete(userId);
 
-    if (!user) {
-      res.status(404).json(`User with id ${userIndex} not found`);
-      return;
-    };
-
-    DB.usersArr.splice(userIndex, 1);
-
-    res.json(DB.usersArr);
+      res.json(user);
+    } catch (e) {
+      res.json(e)
+    }
   }
 }

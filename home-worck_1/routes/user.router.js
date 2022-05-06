@@ -1,17 +1,19 @@
 const { Router } = require('express');
 
 const userController = require('../controllers/user.controller');
+const userMiddlewars = require('../middlewares/user.middelwares');
+
 
 const userRouter = Router();
 
 userRouter.get('/', userController.getAllUsers);
 
-userRouter.get('/:userIndex', userController.getUserById);
+userRouter.get('/:userId', userMiddlewars.chekGetUserById, userController.getUserById);
 
-userRouter.post('/', userController.createUser);
+userRouter.post('/', userMiddlewars.checkCreateUsers, userController.createUser);
 
-userRouter.put('/:userIndex', userController.updateUser);
+userRouter.put('/:userId', userMiddlewars.chekUpdateUser, userController.updateUser);
 
-userRouter.delete('/:userIndex', userController.deleteUser);
+userRouter.delete('/:userId', userMiddlewars.chekDeleteUser, userController.deleteUser);
 
 module.exports = userRouter;

@@ -1,7 +1,8 @@
 const express = require('express');
 const { engine } = require('express-handlebars');
+const mongoose = require('mongoose');
 
-const { PORT } = require('./config/config');
+const { PORT, MONGO_DB_URL } = require('./config/config');
 const carRouter = require('./routes/car.routers');
 const logoutRouter = require('./routes/logout.router');
 const userRouter = require('./routes/user.router');
@@ -20,6 +21,10 @@ app.use('/', welcomeRouter);
 app.use('/cars', carRouter);
 app.use('/logout', logoutRouter);
 app.use('/users', userRouter);
+
+mongoose.connect(MONGO_DB_URL).then(() => {
+  console.log(`Connection to ${MONGO_DB_URL} successfully`);
+})
 
 app.listen(PORT, () => {
   console.log(`App listen ${PORT} port `);
