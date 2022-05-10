@@ -1,56 +1,68 @@
-const { modelUser } = require('../dataBase/models');
+const modelUser = require('../dataBase/user-models');
 
 module.exports = {
-  getAllUsers: async (req, res) => {
-    const users = await modelUser.find();
-
-    res.json(users);
-  },
-
-  getUserById: async (req, res) => {
+  getAllUsers: async (req, res, next) => {
     try {
-      const { userId } = req.params;
-      const user = await modelUser.findById(userId);
+      const { limit = 20, page = 1 } = req.query;
+      const skip = (page - 1) * limit;
 
-      res.json(user);
+      const users = await modelUser.find().limit(limit).skip(skip);
+      const count = await modelUser.count({});
+
+      res.status(200)
+        .json({
+          page,
+          perPage: limit,
+          data: users,
+          count
+        });
+
     } catch (e) {
-      res.json(e)
+      next(e);
     }
   },
 
-  createUser: async (req, res) => {
+  getUserById: (req, res, next) => {
+    try {
+      res.status(200).json(req.user);
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  createUser: async (req, res, next) => {
     try {
       const createUser = await modelUser.create(req.body);
 
       res.status(201).json(createUser);
     } catch (e) {
-      res.json(e);
+      next(e);
     }
   },
 
-  updateUser: async (req, res) => {
+  updateUser: async (req, res, next) => {
     try {
       const { userId } = req.params;
-      const user = await modelUser.findOneAndUpdate(
-        userId,
-        { age: 202 },
+      const user = await modelUser.updateOne(
+        { _id: userId },
+        { $set: req.body },
         { new: true }
       );
 
-      res.json(user);
+      res.status(200).json(user);
     } catch (e) {
-      res.json(e)
+      next(e);
     }
   },
 
-  deleteUser: async (req, res) => {
+  deleteUser: async (req, res, next) => {
     try {
       const { userId } = req.params;
       const user = await modelUser.findByIdAndDelete(userId);
 
-      res.json(user);
+      res.status(200).json(`User was deleted successful`);
     } catch (e) {
-      res.json(e)
+      next(e);
     }
   }
 }

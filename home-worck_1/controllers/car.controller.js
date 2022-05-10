@@ -1,71 +1,68 @@
-const { modelCar } = require('../dataBase/models');
+const modelCar = require('../dataBase//car-models');
 
 module.exports = {
-  getAllCars: async (req, res) => {
-    const cars = await modelCar.find();
-
-    res.json(cars);
-  },
-
-  getCarById: async (req, res) => {
+  getAllCars: async (req, res, next) => {
     try {
-      const { carId } = req.params;
-      const car = await modelCar.findById(carId);
+      const { limit = 20, page = 1 } = req.query;
+      const skip = (page - 1) * limit;
 
-      if (!car) {
-        res.status(404).json(`Car with id ${carId} not found`);
-        return;
-      };
+      const cars = await modelCar.find().limit(limit).skip(skip);
+      const count = await modelCar.count({});
 
-      res.json(car);
+      res.status(200)
+        .json({
+          page,
+          perPage: limit,
+          data: cars,
+          count
+        });
+
     } catch (e) {
-      res.json(e)
+      next(e);
     }
   },
 
-  createCar: async (req, res) => {
+  getCarById: (req, res, next) => {
+    try {
+      res.status(200).json(req.car);
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  createCar: async (req, res, next) => {
     try {
       const createCar = await modelCar.create(req.body);
 
       res.status(201).json(createCar);
     } catch (e) {
-      res.json(e);
+      next(e);
     }
   },
 
-  updateCar: async (req, res) => {
+  updateCar: async (req, res, next) => {
     try {
       const { carId } = req.params;
-      const car = await modelCar.findOneAndUpdate(
-        carId,
-        { year: 2022 },
+      const car = await modelCar.updateOne(
+        { _id: carId },
+        { $set: req.body },
         { new: true }
       );
 
-      if (!car) {
-        res.status(404).json(`Car with id ${carId} not found`);
-        return;
-      };
-
-      res.json(car);
+      res.status(200).json(car);
     } catch (e) {
-      res.json(e)
+      next(e);
     }
   },
 
-  deleteCar: async (req, res) => {
+  deleteCar: async (req, res, next) => {
     try {
       const { carId } = req.params;
       const car = await modelCar.findByIdAndDelete(carId);
 
-      if (!car) {
-        res.status(404).json(`Car with id ${carId} not found`);
-        return;
-      };
-
-      res.json(car);
+      res.status(200).json('Car was deleted successful');
     } catch (e) {
-      res.json(e)
+      next(e);
     }
   }
 }

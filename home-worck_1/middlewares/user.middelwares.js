@@ -1,84 +1,53 @@
-const { modelUser } = require('../dataBase/models');
+const modelUser = require('../dataBase/user-models');
+const ApiError = require('../error/ApiError');
 
 const checkCreateUsers = async (req, res, next) => {
   try {
     const { email = '', name } = req.body;
 
     if (!name) {
-      res.json('Name is required');
+      next(new ApiError('Name is required', 400));
       return;
     };
 
     if (!email) {
-      res.json('Email is required');
+      next(new ApiError('Email is required', 400));
       return
     };
 
     const userIsPresent = await modelUser.findOne({ email: email.toLowerCase().trim() });
 
     if (userIsPresent) {
-      res.status(409).json('User with whis email exists');
+      next(new ApiError('User with this email exists', 409));
       return;
     };
 
     next();
   } catch (e) {
-    res.json(e)
+    next(e);
   }
 };
 
-const chekGetUserById = async (req, res, next) => {
+const checkIsUserPresent = async (req, res, next) => {
   try {
-
     const { userId } = req.params;
-    const user = await modelUser.findById(userId);
 
-    if (!user) {
-      res.json('User by Id not foynded');
-      return
+    const userById = await modelUser.findById(userId);
+
+    if (!userById) {
+      next(new ApiError('User is not found ', 404));
+      return;
     }
 
-    next();
+    req.user = userById;
+
+    next()
   } catch (e) {
-    res.json(e)
-  }
-};
-
-const chekDeleteUser = async (req, res, next) => {
-  try {
-    const { userId } = req.params;
-    const user = await modelUser.findOne({ _id: userId });
-
-    if (!user) {
-      res.status(404).json(`User with id ${userId} not found`);
-      return;
-    };
-
-  } catch (e) {
-    res.json(e)
-  };
-  next()
-};
-
-chekUpdateUser = async (req, res, next) => {
-  try {
-    const { userId } = req.params;
-    const user = await modelUser.findOne({ _id: userId });
-
-    if (!user) {
-      res.status(404).json(`User with id ${userId} not found`);
-      return;
-    };
-
-    next();
-  } catch (e) {
-    res.json(e)
+    next(e);
   }
 };
 
 module.exports = {
   checkCreateUsers,
-  chekGetUserById,
-  chekDeleteUser,
-  chekUpdateUser
+  checkIsUserPresent
 }

@@ -8,12 +8,14 @@ const userRouter = Router();
 
 userRouter.get('/', userController.getAllUsers);
 
-userRouter.get('/:userId', userMiddlewars.chekGetUserById, userController.getUserById);
-
 userRouter.post('/', userMiddlewars.checkCreateUsers, userController.createUser);
 
-userRouter.put('/:userId', userMiddlewars.chekUpdateUser, userController.updateUser);
+userRouter.all('/:userId', userMiddlewars.checkIsUserPresent);
 
-userRouter.delete('/:userId', userMiddlewars.chekDeleteUser, userController.deleteUser);
+userRouter.get('/:userId', userController.getUserById);
+
+userRouter.put('/:userId', userController.updateUser);
+
+userRouter.delete('/:userId', userController.deleteUser);
 
 module.exports = userRouter;
