@@ -1,21 +1,27 @@
 const modelUser = require('../dataBase/user-models');
+const ApiError = require('../error/ApiError');
 
 module.exports = {
   getAllUsers: async (req, res, next) => {
     try {
       const { limit = 20, page = 1 } = req.query;
+
+      if (limit <= 0 || page <= 0) {
+        next(new ApiError('Limit or page not valid', 400));
+        return;
+      }
+
       const skip = (page - 1) * limit;
 
       const users = await modelUser.find().limit(limit).skip(skip);
       const count = await modelUser.count({});
 
-      res.status(200)
-        .json({
-          page,
-          perPage: limit,
-          data: users,
-          count
-        });
+      res.json({
+        page,
+        perPage: limit,
+        data: users,
+        count
+      });
 
     } catch (e) {
       next(e);
@@ -24,7 +30,7 @@ module.exports = {
 
   getUserById: (req, res, next) => {
     try {
-      res.status(200).json(req.user);
+      res.json(req.user);
     } catch (e) {
       next(e);
     }
@@ -49,7 +55,7 @@ module.exports = {
         { new: true }
       );
 
-      res.status(200).json(user);
+      res.json(user);
     } catch (e) {
       next(e);
     }
@@ -60,7 +66,7 @@ module.exports = {
       const { userId } = req.params;
       const user = await modelUser.findByIdAndDelete(userId);
 
-      res.status(200).json(`User was deleted successful`);
+      res.json(`User was deleted successful`);
     } catch (e) {
       next(e);
     }

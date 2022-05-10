@@ -1,21 +1,26 @@
 const modelCar = require('../dataBase//car-models');
+const ApiError = require('../error/ApiError');
 
 module.exports = {
   getAllCars: async (req, res, next) => {
     try {
       const { limit = 20, page = 1 } = req.query;
+
+      if (limit <= 0 || page <= 0) {
+        next(new ApiError('Limit or page not valid', 400));
+      }
+
       const skip = (page - 1) * limit;
 
       const cars = await modelCar.find().limit(limit).skip(skip);
       const count = await modelCar.count({});
 
-      res.status(200)
-        .json({
-          page,
-          perPage: limit,
-          data: cars,
-          count
-        });
+      res.json({
+        page,
+        perPage: limit,
+        data: cars,
+        count
+      });
 
     } catch (e) {
       next(e);
@@ -24,7 +29,7 @@ module.exports = {
 
   getCarById: (req, res, next) => {
     try {
-      res.status(200).json(req.car);
+      res.json(req.car);
     } catch (e) {
       next(e);
     }
@@ -49,7 +54,7 @@ module.exports = {
         { new: true }
       );
 
-      res.status(200).json(car);
+      res.json(car);
     } catch (e) {
       next(e);
     }
@@ -60,7 +65,7 @@ module.exports = {
       const { carId } = req.params;
       const car = await modelCar.findByIdAndDelete(carId);
 
-      res.status(200).json('Car was deleted successful');
+      res.json('Car was deleted successful');
     } catch (e) {
       next(e);
     }
