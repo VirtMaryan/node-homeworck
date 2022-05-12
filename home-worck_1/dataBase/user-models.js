@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const userGenderEnum = require('../constants/user-gender.enum');
+const { userGenderEnum } = require('../constants');
 
 const User = new Schema({
   name: {
@@ -23,7 +23,14 @@ const User = new Schema({
     lowercase: true,
     unique: true,
     required: true
-  }
+  },
+  password: {
+    type: String,
+    required: true,
+    default: null,
+    select: false
+  },
+  brothers: {}
 }, { timestamps: true });
 
-module.exports = model('User', User);
+module.exports = model('User', User)

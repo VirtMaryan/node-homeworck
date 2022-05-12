@@ -6,11 +6,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { PORT, MONGO_DB_URL } = require('./config/config');
-const carRouter = require('./routes/car.routers');
-const logoutRouter = require('./routes/logout.router');
-const userRouter = require('./routes/user.router');
-const welcomeRouter = require('./routes/welcomepage.router');
-const ApiError = require('./error/ApiError');
+const { carRouter, logoutRouter, userRouter, welcomeRouter } = require('./routes');
+const { ApiError } = require('./error');
 
 const app = express();
 
@@ -30,7 +27,7 @@ app.use(_mainErrorHandler);
 
 function _notFoundHandler(req, res, next) {
   next(new ApiError('Not found', 404));
-};
+}
 
 function _mainErrorHandler(err, req, res, next) {
   res
@@ -39,7 +36,7 @@ function _mainErrorHandler(err, req, res, next) {
       message: err.message || 'Server error',
       status: err.status
     });
-};
+}
 
 mongoose.connect(MONGO_DB_URL).then(() => {
   console.log(`Connection to ${MONGO_DB_URL} successfully`);
@@ -47,4 +44,4 @@ mongoose.connect(MONGO_DB_URL).then(() => {
 
 app.listen(PORT, () => {
   console.log(`App listen ${PORT} port `);
-});
+})

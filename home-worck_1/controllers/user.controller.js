@@ -1,5 +1,6 @@
-const modelUser = require('../dataBase/user-models');
-const ApiError = require('../error/ApiError');
+const { modelUser } = require('../dataBase');
+const { ApiError } = require('../error');
+const { authService } = require('../services');
 
 module.exports = {
   getAllUsers: async (req, res, next) => {
@@ -38,7 +39,8 @@ module.exports = {
 
   createUser: async (req, res, next) => {
     try {
-      const createUser = await modelUser.create(req.body);
+      const hashPassword = await authService.hashPassword(req.body.password);
+      const createUser = await modelUser.create({ ...req.body, password: hashPassword });
 
       res.status(201).json(createUser);
     } catch (e) {
@@ -64,7 +66,7 @@ module.exports = {
   deleteUser: async (req, res, next) => {
     try {
       const { userId } = req.params;
-      const user = await modelUser.findByIdAndDelete(userId);
+      await modelUser.findByIdAndDelete(userId);
 
       res.json(`User was deleted successful`);
     } catch (e) {

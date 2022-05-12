@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const carTypesEnum = require('../constants/car-types.enum');
+const { carTypesEnum } = require('../constants');
 
 const Car = new Schema({
   producer: {
@@ -21,4 +21,4 @@ const Car = new Schema({
   }
 }, { timestamps: true });
 
-module.exports = model('Car', Car);
+module.exports = model('Car', Car)

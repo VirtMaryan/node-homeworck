@@ -1,28 +1,33 @@
-const modelUser = require('../dataBase/user-models');
-const ApiError = require('../error/ApiError');
+const { modelUser } = require('../dataBase');
+const { ApiError } = require('../error');
+const { userValidator } = require('../validators');
 
-const checkCreateUsers = async (req, res, next) => {
+const checkEmailDuplicate = async (req, res, next) => {
   try {
-    const { email = '', name } = req.body;
-
-    if (!name) {
-      next(new ApiError('Name is required', 400));
-      return;
-    };
-
-    if (!email) {
-      next(new ApiError('Email is required', 400));
-      return
-    };
-
+    const { email } = req.body;
     const userIsPresent = await modelUser.findOne({ email: email.toLowerCase().trim() });
 
     if (userIsPresent) {
       next(new ApiError('User with this email exists', 409));
       return;
-    };
+    }
 
     next();
+  } catch (e) {
+    next(e);
+  }
+};
+
+const checkIsIDValid = (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    if (userId.length !== 24) {
+      next(new ApiError('Id not valid', 400));
+      return;
+    }
+
+    next()
   } catch (e) {
     next(e);
   }
@@ -47,7 +52,26 @@ const checkIsUserPresent = async (req, res, next) => {
   }
 };
 
+const validateUser = (req, res, next) => {
+  try {
+    const { error, value } = userValidator.joinUserSchema.validate(req.body);
+
+    if (error) {
+      next(new ApiError(error.details[0].message, 400));
+      return;
+    }
+
+    req.body = value;
+
+    next()
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
-  checkCreateUsers,
-  checkIsUserPresent
+  checkEmailDuplicate,
+  checkIsIDValid,
+  checkIsUserPresent,
+  validateUser
 }
