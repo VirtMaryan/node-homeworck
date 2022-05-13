@@ -2,7 +2,6 @@ const { modelUser } = require('../dataBase');
 const { ApiError } = require('../error');
 const { userValidator } = require('../validators');
 const { userGenderEnum } = require('../constants');
-const { MALE, FEMALE, NEUTER } = require('../constants/user-gender.enum');
 
 const checkEmailDuplicate = async (req, res, next) => {
   try {
@@ -75,7 +74,7 @@ const checkUserGender = (req, res, next) => {
   try {
     const { gender = '' } = req.body;
 
-    if (gender !== MALE && gender !== FEMALE && gender !== NEUTER) {
+    if (gender !== userGenderEnum.MALE && gender !== userGenderEnum.FEMALE && gender !== userGenderEnum.NEUTER) {
       next(new ApiError('Not valid gender', 400));
       return;
     }
