@@ -8,6 +8,13 @@ const joiCarSchema = Joi.object({
   type: Joi.string().valid('sedan', 'hatchback', 'suv')
 });
 
+const joiCarUpdateSchema = Joi.object({
+  producer: Joi.string().alphanum().min(2).trim().lowercase(),
+  year: Joi.number().integer().min(constants.CURRENT_YEAR - 50).max(constants.CURRENT_YEAR),
+  type: Joi.string().valid('sedan', 'hatchback', 'suv')
+});
+
 module.exports = {
-  joiCarSchema
+  joiCarSchema,
+  joiCarUpdateSchema
 }

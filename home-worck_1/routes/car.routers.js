@@ -10,7 +10,7 @@ carRouter.post('/', carMiddelwares.validateCar, carMiddelwares.chekDuplicateCar,
 
 carRouter.all('/:carId', carMiddelwares.checkCarIdValid, carMiddelwares.checkIsCarPresent);
 carRouter.get('/:carId', carController.getCarById);
-carRouter.put('/:carId', carMiddelwares.checkCarType, carController.updateCar);
+carRouter.put('/:carId', carMiddelwares.validateUpdateCar, carController.updateCar);
 carRouter.delete('/:carId', carController.deleteCar);
 
 module.exports = carRouter

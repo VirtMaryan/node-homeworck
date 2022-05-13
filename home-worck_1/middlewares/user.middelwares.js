@@ -1,7 +1,6 @@
 const { modelUser } = require('../dataBase');
 const { ApiError } = require('../error');
 const { userValidator } = require('../validators');
-const { userGenderEnum } = require('../constants');
 
 const checkEmailDuplicate = async (req, res, next) => {
   try {
@@ -70,29 +69,16 @@ const validateUser = (req, res, next) => {
   }
 };
 
-const checkUserGender = (req, res, next) => {
+const validateUpdate = (req, res, next) => {
   try {
-    const { gender = '' } = req.body;
+    const { error, value } = userValidator.joiUserUpdateSchema.validate(req.body);
 
-    if (gender !== userGenderEnum.MALE && gender !== userGenderEnum.FEMALE && gender !== userGenderEnum.NEUTER) {
-      next(new ApiError('Not valid gender', 400));
+    if (error) {
+      next(new ApiError(error.details[0].message, 400));
       return;
     }
 
-    next()
-  } catch (e) {
-    next(e);
-  }
-};
-
-const chekUserAge = (req, res, next) => {
-  try {
-    const { age } = req.body;
-
-    if (typeof age !== 'number' || age < 0) {
-      next(new ApiError('age not valid', 400));
-      return;
-    }
+    req.body = value;
 
     next()
   } catch (e) {
@@ -104,7 +90,6 @@ module.exports = {
   checkEmailDuplicate,
   checkIsIDValid,
   checkIsUserPresent,
-  checkUserGender,
-  chekUserAge,
+  validateUpdate,
   validateUser
 }

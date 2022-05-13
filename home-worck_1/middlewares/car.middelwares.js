@@ -1,7 +1,6 @@
 const { modelCar } = require('../dataBase');
 const { ApiError } = require('../error');
 const { carValidator } = require('../validators');
-const { carTypesEnum } = require('../constants');
 
 const chekDuplicateCar = async (req, res, next) => {
   try {
@@ -71,14 +70,16 @@ const validateCar = (req, res, next) => {
   }
 };
 
-const checkCarType = (req, res, next) => {
+const validateUpdateCar = (req, res, next) => {
   try {
-    const { type = '' } = req.body;
+    const { error, value } = carValidator.joiCarUpdateSchema.validate(req.body);
 
-    if (type !== carTypesEnum.HATCHBACK && type !== carTypesEnum.SEDAN && type !== carTypesEnum.SUV) {
-      next(new ApiError('Not valid type. It must be hatchback, sedan or suv ', 400));
+    if (error) {
+      next(new ApiError(error.details[0].message, 400));
       return;
     }
+
+    req.body = value;
 
     next()
   } catch (e) {
@@ -90,6 +91,6 @@ module.exports = {
   chekDuplicateCar,
   checkIsCarPresent,
   checkCarIdValid,
-  checkCarType,
+  validateUpdateCar,
   validateCar
 }
