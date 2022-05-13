@@ -3,7 +3,6 @@ const { Router } = require('express');
 const { userController } = require('../controllers');
 const { userMiddlewars } = require('../middlewares');
 
-
 const userRouter = Router();
 
 userRouter.get('/', userController.getAllUsers);
