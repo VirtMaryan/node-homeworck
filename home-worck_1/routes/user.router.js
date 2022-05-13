@@ -12,6 +12,6 @@ userRouter.post('/', userMiddlewars.validateUser, userMiddlewars.checkEmailDupli
 userRouter.all('/:userId', userMiddlewars.checkIsIDValid, userMiddlewars.checkIsUserPresent);
 userRouter.get('/:userId', userController.getUserById);
 userRouter.delete('/:userId', userController.deleteUser);
-userRouter.patch('/:userId', userController.updateUser);
+userRouter.put('/:userId', userMiddlewars.chekUserAge, userMiddlewars.checkUserGender, userController.updateUser);
 
 module.exports = userRouter

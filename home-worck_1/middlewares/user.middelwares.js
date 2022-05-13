@@ -1,6 +1,8 @@
 const { modelUser } = require('../dataBase');
 const { ApiError } = require('../error');
 const { userValidator } = require('../validators');
+const { userGenderEnum } = require('../constants');
+const { MALE, FEMALE, NEUTER } = require('../constants/user-gender.enum');
 
 const checkEmailDuplicate = async (req, res, next) => {
   try {
@@ -69,9 +71,41 @@ const validateUser = (req, res, next) => {
   }
 };
 
+const checkUserGender = (req, res, next) => {
+  try {
+    const { gender = '' } = req.body;
+
+    if (gender !== MALE && gender !== FEMALE && gender !== NEUTER) {
+      next(new ApiError('Not valid gender', 400));
+      return;
+    }
+
+    next()
+  } catch (e) {
+    next(e);
+  }
+};
+
+const chekUserAge = (req, res, next) => {
+  try {
+    const { age } = req.body;
+
+    if (typeof age !== 'number' || age < 0) {
+      next(new ApiError('age not valid', 400));
+      return;
+    }
+
+    next()
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
   checkEmailDuplicate,
   checkIsIDValid,
   checkIsUserPresent,
+  checkUserGender,
+  chekUserAge,
   validateUser
 }
