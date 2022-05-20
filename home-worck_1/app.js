@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { PORT, MONGO_DB_URL } = require('./config/config');
-const { carRouter, logoutRouter, userRouter, welcomeRouter } = require('./routes');
+const { carRouter, logoutRouter, userRouter, welcomeRouter, authRouter } = require('./routes');
 const { ApiError } = require('./error');
 
 const app = express();
@@ -19,6 +19,7 @@ app.set('view engine', '.hbs');
 app.set('views', './static');
 
 app.use('/', welcomeRouter);
+app.use('/auth', authRouter);
 app.use('/cars', carRouter);
 app.use('/logout', logoutRouter);
 app.use('/users', userRouter);

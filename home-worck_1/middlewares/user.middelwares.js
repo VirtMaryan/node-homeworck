@@ -1,6 +1,7 @@
 const { modelUser } = require('../dataBase');
 const { ApiError } = require('../error');
 const { userValidator } = require('../validators');
+const { paramTypeEnum } = require('../constants');
 
 const checkEmailDuplicate = async (req, res, next) => {
   try {
@@ -33,22 +34,31 @@ const checkIsIDValid = (req, res, next) => {
   }
 };
 
-const checkIsUserPresent = async (req, res, next) => {
-  try {
-    const { userId } = req.params;
+// eslint-disable-next-line arrow-body-style
+const getUsreDynamiclly = (paramName = '_id', where = paramTypeEnum.BODY, dataBaseField = paramName) => {
+  return async (req, res, next) => {
+    try {
+      const payload = req[where];
 
-    const userById = await modelUser.findById(userId);
+      if (!payload || typeof payload !== 'object') {
+        next(new ApiError('wrong param in middelwares'));
+        return;
+      }
 
-    if (!userById) {
-      next(new ApiError('User is not found ', 404));
-      return;
+      const param = payload[paramName];
+
+      const user = await modelUser.findOne({ [dataBaseField]: param }).select('+password');
+
+      if (!user) {
+        next(new ApiError('User is not found ', 404));
+        return;
+      }
+
+      req.user = user;
+      next()
+    } catch (e) {
+      next(e)
     }
-
-    req.user = userById;
-
-    next()
-  } catch (e) {
-    next(e);
   }
 };
 
@@ -87,9 +97,9 @@ const validateUpdate = (req, res, next) => {
 };
 
 module.exports = {
+  getUsreDynamiclly,
   checkEmailDuplicate,
   checkIsIDValid,
-  checkIsUserPresent,
   validateUpdate,
   validateUser
 }
