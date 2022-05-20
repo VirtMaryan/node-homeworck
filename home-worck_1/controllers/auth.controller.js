@@ -31,17 +31,17 @@ module.exports = {
 
   getNewTokenPairByRefresh: async (req, res, next) => {
     try {
-      const refresh_token = req.get('Authorization');//якщо deleteMany то цей хедр не потрібний 
-      const user = req.authUsre;
-      // await modelOAuth.deleteMany({ user_id: user._id });
+      const refresh_token = req.get('Authorization');
+      const authUser = req.authUsre;
+
       await modelOAuth.deleteOne({ refresh_token });
 
       const newTokenPair = authService.generateTokenPair();
-      await modelOAuth.create({ user_id: user._id, ...newTokenPair });
+      await modelOAuth.create({ user_id: authUser._id, ...newTokenPair });
 
       res.json({
         ...newTokenPair,
-        user
+        authUser
       });
     } catch (e) {
       next(e);
