@@ -9,4 +9,8 @@ module.exports = {
     subject: 'Щось розлогінилось',
     templateName: 'logout'
   },
+  [emailActionsEnum.FORGOT_PASSWORD]: {
+    subject: 'ТИ забув пароль? Та як так...',
+    templateName: 'forgotPass'
+  },
 }

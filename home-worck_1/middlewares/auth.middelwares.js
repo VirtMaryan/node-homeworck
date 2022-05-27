@@ -2,7 +2,7 @@ const { authService } = require('../services');
 const { authValidator } = require('../validators');
 const { tokenTypeEnum } = require('../constants');
 const { ApiError } = require('../error');
-const { modelOAuth } = require('../dataBase');
+const { modelOAuth, modelActionToken } = require('../dataBase');
 
 async function chekAccessToken(req, res, next) {
   try {
@@ -73,8 +73,73 @@ function isLoginDataValid(req, res, next) {
   }
 }
 
+function isEmailValid(req, res, next) {
+  try {
+    const { error, value } = authValidator.emailSchema.validate(req.body);
+
+    if (error) {
+      next(new ApiError(error.details[0].message, 400));
+      return
+    }
+
+    req.body = value;
+
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
+
+function isPasswordlValid(req, res, next) {
+  try {
+    const { error, value } = authValidator.passworSchema.validate(req.body);
+
+    if (error) {
+      next(new ApiError(error.details[0].message, 400));
+      return
+    }
+
+    req.body = value;
+
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
+
+function chekActionToken(actionType) {
+  return async function(req, res, next) {
+    try {
+      const { token } = req.body;
+
+      if (!token) {
+        next(new ApiError('No token', 401));
+        return
+      }
+
+      authService.validateToken(token, actionType);
+
+      const tokenData = await modelActionToken.findOne({ token, actionType }).populate('user_id');
+
+      if (!tokenData || !tokenData.user_id) {
+        next(new ApiError('Not valid token', 401));
+        return
+      }
+
+      req.user = tokenData.user_id;
+
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+}
+
 module.exports = {
   chekAccessToken,
   chekRefreshToken,
-  isLoginDataValid
+  isLoginDataValid,
+  isEmailValid,
+  isPasswordlValid,
+  chekActionToken,
 };

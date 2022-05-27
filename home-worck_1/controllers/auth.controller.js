@@ -1,6 +1,7 @@
-const { emailActionsEnum } = require('../constants');
+const { emailActionsEnum, actionTypeEnum } = require('../constants');
 const { authService, emailService } = require('../services');
-const { modelOAuth } = require('../dataBase');
+const { modelOAuth, modelActionToken, modelUser } = require('../dataBase');
+const { FRONTEND_URL } = require('../config/config');
 
 module.exports = {
   login: async (req, res, next) => {
@@ -47,6 +48,44 @@ module.exports = {
         ...newTokenPair,
         authUser
       });
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  forgotPassword: async (req, res, next) => {
+    try {
+      const { user } = req;
+      const token = authService.generateActionToken();
+
+      await modelActionToken.create({
+        token,
+        user_id: user._id,
+        actionType: actionTypeEnum.FORGOT_PASSWORD
+      });
+
+      const forgotPassURL = `${FRONTEND_URL}/password/forgot?token=${token}`;
+
+      await emailService.sendMail(
+        'marik1488ss@gmail.com', emailActionsEnum.FORGOT_PASSWORD,
+        { forgotPassURL, userName: user.name });
+
+      res.json('all oke')
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  setPasswordAfterForgot: async (req, res, next) => {
+    try {
+      const { user, body } = req;
+      const newPassword = await authService.hashPassword(body.password);
+
+      await modelUser.updateOne({ _id: user._id }, { password: newPassword });
+      await modelOAuth.deleteMany({ user_id: user._id });
+      await modelActionToken.deleteOne({ token: body.token });
+
+      res.json('New password was set')
     } catch (e) {
       next(e);
     }
