@@ -107,10 +107,27 @@ function isPasswordlValid(req, res, next) {
   }
 }
 
+function isNewPasswordlValid(req, res, next) {
+  try {
+    const { error, value } = authValidator.newPassworSchema.validate(req.body);
+
+    if (error) {
+      next(new ApiError(error.details[0].message, 400));
+      return
+    }
+
+    req.body = value;
+
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
+
 function chekActionToken(actionType) {
   return async function(req, res, next) {
     try {
-      const { token } = req.body;
+      const token = req.get('Authorization');
 
       if (!token) {
         next(new ApiError('No token', 401));
@@ -142,4 +159,5 @@ module.exports = {
   isEmailValid,
   isPasswordlValid,
   chekActionToken,
+  isNewPasswordlValid
 };

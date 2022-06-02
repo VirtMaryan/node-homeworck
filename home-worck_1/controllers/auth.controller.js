@@ -6,9 +6,9 @@ const { FRONTEND_URL } = require('../config/config');
 module.exports = {
   login: async (req, res, next) => {
     try {
-      const { user, body: { password } } = req;
+      const { user, body: { password, email } } = req;
 
-      await emailService.sendMail('marik1488ss@gmail.com', emailActionsEnum.WELCOME);
+      await emailService.sendMail(email, emailActionsEnum.WELCOME);
       await authService.comparePassword(user.password, password);
 
       const tokenPair = authService.generateTokenPair();
@@ -25,7 +25,7 @@ module.exports = {
 
   logout: async (req, res, next) => {
     try {
-      await emailService.sendMail('marik1488ss@gmail.com', emailActionsEnum.LOGOUT);
+      await emailService.sendMail(req.authUsre.email, emailActionsEnum.LOGOUT);
       await modelOAuth.deleteMany({ user_id: req.authUsre._id });
 
       res.json('ok')
@@ -55,7 +55,7 @@ module.exports = {
 
   forgotPassword: async (req, res, next) => {
     try {
-      const { user } = req;
+      const { user, body: { email } } = req;
       const token = authService.generateActionToken();
 
       await modelActionToken.create({
@@ -67,7 +67,7 @@ module.exports = {
       const forgotPassURL = `${FRONTEND_URL}/password/forgot?token=${token}`;
 
       await emailService.sendMail(
-        'marik1488ss@gmail.com', emailActionsEnum.FORGOT_PASSWORD,
+        email, emailActionsEnum.FORGOT_PASSWORD,
         { forgotPassURL, userName: user.name });
 
       res.json('all oke')
@@ -79,13 +79,30 @@ module.exports = {
   setPasswordAfterForgot: async (req, res, next) => {
     try {
       const { user, body } = req;
+      const token = req.get('Authorization');
       const newPassword = await authService.hashPassword(body.password);
 
       await modelUser.updateOne({ _id: user._id }, { password: newPassword });
       await modelOAuth.deleteMany({ user_id: user._id });
-      await modelActionToken.deleteOne({ token: body.token });
+      await modelActionToken.deleteOne({ token });
 
       res.json('New password was set')
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  changePassword: async (req, res, next) => {
+    try {
+      const { user, body: { password, newPassword } } = req;
+
+      await authService.comparePassword(user.password, password);
+
+      const hashPass = await authService.hashPassword(newPassword);
+
+      await modelUser.updateOne({ _id: user._id }, { password: hashPass });
+
+      res.json('Password was chenged successful')
     } catch (e) {
       next(e);
     }

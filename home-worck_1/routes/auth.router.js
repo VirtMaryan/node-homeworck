@@ -21,4 +21,9 @@ authRouter.put('/password/forgot',
   authMiddlewars.chekActionToken(actionTypeEnum.FORGOT_PASSWORD),
   authController.setPasswordAfterForgot);
 
+authRouter.put('/password/change',
+  authMiddlewars.isNewPasswordlValid,
+  authMiddlewars.chekAccessToken,
+  userMiddlewars.getUsreDynamiclly('_id', 'authUsre'),
+  authController.changePassword);
 module.exports = authRouter

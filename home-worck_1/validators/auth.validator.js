@@ -12,6 +12,11 @@ const passworSchema = Joi.object({
   password: Joi.string().regex(constants.PASSWORD_REGEXP).required(),
 });
 
+const newPassworSchema = Joi.object({
+  password: Joi.string().regex(constants.PASSWORD_REGEXP).required(),
+  newPassword: Joi.string().regex(constants.PASSWORD_REGEXP).required(),
+});
+
 const emailSchema = Joi.object({
   email: Joi.string().regex(constants.EMAIL_REGEXP).required().trim().lowercase(),
 });
@@ -19,5 +24,6 @@ const emailSchema = Joi.object({
 module.exports = {
   loginSchema,
   emailSchema,
-  passworSchema
+  passworSchema,
+  newPassworSchema
 }
