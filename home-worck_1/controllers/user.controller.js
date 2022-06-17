@@ -1,6 +1,6 @@
 const { modelUser } = require('../dataBase');
 const { ApiError } = require('../error');
-const { authService } = require('../services');
+const { authService, s3Service } = require('../services');
 
 module.exports = {
   getAllUsers: async (req, res, next) => {
@@ -72,5 +72,19 @@ module.exports = {
     } catch (e) {
       next(e);
     }
+  },
+
+  uploadUserPhoto: async (req, res, next) => {
+    try {
+      const avatar = req.files.avatar;
+      const user = req.user;
+
+      const result = await s3Service.ulpoudFile(avatar, 'user', user._id);
+
+      res.json(result)
+    } catch (e) {
+      next(e);
+    }
   }
+
 }

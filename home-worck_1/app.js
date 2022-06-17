@@ -1,5 +1,6 @@
 const express = require('express');
 const { engine } = require('express-handlebars');
+const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
@@ -17,6 +18,8 @@ app.use(express.urlencoded({ extended: true }));
 app.engine('.hbs', engine({ defaultLayout: false }));
 app.set('view engine', '.hbs');
 app.set('views', './static');
+
+app.use(fileUpload({}));
 
 app.use('/', welcomeRouter);
 app.use('/auth', authRouter);

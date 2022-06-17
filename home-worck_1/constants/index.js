@@ -5,5 +5,6 @@ module.exports = {
   constants: require('./constants'),
   tokenTypeEnum: require('./token-types.enum'),
   paramTypeEnum: require('./param-types.enum'),
-  actionTypeEnum: require('./action-type.enum')
+  actionTypeEnum: require('./action-type.enum'),
+  fileType: require('./file-type')
 }
