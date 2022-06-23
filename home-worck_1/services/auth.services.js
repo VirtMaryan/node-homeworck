@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const { ApiError } = require('../error');
+const { ApiError } = require('@error');
 const { REFRESH_TOKEN, ACCESS_TOKEN, ACTION_TOKEN } = require('../config/config');
 const { tokenTypeEnum, actionTypeEnum } = require('../constants');
 

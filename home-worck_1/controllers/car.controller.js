@@ -1,5 +1,5 @@
 const { modelCar } = require('../dataBase');
-const { ApiError } = require('../error');
+const { ApiError } = require('@error');
 
 module.exports = {
   getAllCars: async (req, res, next) => {

@@ -4,7 +4,7 @@ const path = require('path');
 
 const { SYSTEM_MAIL, SYSTEM_MAIL_PASSWORD, FRONTEND_URL } = require('../config/config');
 const templateInfoObject = require('../email-templates');
-const { ApiError } = require('../error');
+const { ApiError } = require('@error');
 
 const sendMail = async (userMail, emailAction, locals = {}) => {
   const templateRenderer = new EmailTemplate({

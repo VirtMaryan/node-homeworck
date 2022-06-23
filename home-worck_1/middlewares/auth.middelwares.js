@@ -1,7 +1,7 @@
 const { authService } = require('../services');
 const { authValidator } = require('../validators');
 const { tokenTypeEnum } = require('../constants');
-const { ApiError } = require('../error');
+const { ApiError } = require('@error');
 const { modelOAuth, modelActionToken } = require('../dataBase');
 
 async function chekAccessToken(req, res, next) {

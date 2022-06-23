@@ -1,5 +1,5 @@
 const { modelUser } = require('../dataBase');
-const { ApiError } = require('../error');
+const { ApiError } = require('@error');
 const { authService, s3Service } = require('../services');
 
 module.exports = {
@@ -86,5 +86,16 @@ module.exports = {
       next(e);
     }
   }
+  // TODO
+  // getPhoto: async (req, res, next) => {
+  //   try {
+  //     const {key} = req.params;
+  //     const result = await s3Service.getPhoto(key);
+
+  //     res.json(result);
+  //   } catch (e) {
+  //     next();
+  //   }
+  // }  
 
 }

@@ -1,5 +1,5 @@
 const { modelCar } = require('../dataBase');
-const { ApiError } = require('../error');
+const { ApiError } = require('@error');
 const { carValidator } = require('../validators');
 
 const chekDuplicateCar = async (req, res, next) => {

@@ -1,3 +1,4 @@
+require('module-alias/register');
 const express = require('express');
 const { engine } = require('express-handlebars');
 const fileUpload = require('express-fileupload');
@@ -6,9 +7,9 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const { PORT, MONGO_DB_URL } = require('./config/config');
+const { PORT, MONGO_DB_URL, NODE_ENV } = require('./config/config');
 const { carRouter, logoutRouter, userRouter, welcomeRouter, authRouter } = require('./routes');
-const { ApiError } = require('./error');
+const { ApiError } = require('@error');
 
 const app = express();
 
@@ -20,6 +21,12 @@ app.set('view engine', '.hbs');
 app.set('views', './static');
 
 app.use(fileUpload({}));
+
+if (NODE_ENV === 'local') {
+  const morgan = require('morgan');
+
+  app.use(morgan('dev'));
+}
 
 app.use('/', welcomeRouter);
 app.use('/auth', authRouter);

@@ -21,10 +21,23 @@ const ulpoudFile = async (fileToUpload, itemType, itemId) => {
     Key
   }
 
-  const uploadData = await s3.upload(uploadParams).promise();
+  await s3.upload(uploadParams).promise();
 
-  return uploadData.Location;
+  const signUrl = s3.getSignedUrl('getObject', { Bucket: S3_BUCKET, Key, Expires: 90 });
+
+  return signUrl;
 };
+
+// Get photo from S3 TODO
+// const getPhoto = (fileKey) => {
+//   const gteParams = s3.getSignedUrl('getObject', {
+//     Bucket: S3_BUCKET,
+//     Key: fileKey,
+//     Expires: 20
+//   });
+
+//   return gteParams;
+// };
 
 function buildFilePath(itemType, itemId, fileName = '') {
   const extension = fileName.split('.').pop();

@@ -1,4 +1,11 @@
 {
+  "description": "Node_js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "debug": "node --inspect app.js",
+    "pm2": "echo Server Start... && pm2 start app.js --watch --attach --name MainServer",
+    "prod": "npm i --only=prod && echo WITHOUT devDependencies && npm run pm2 "
+  },
   "dependencies": {
     "aws-sdk": "^2.1156.0",
     "bcrypt": "^5.0.1",
@@ -9,12 +16,18 @@
     "express-handlebars": "^6.0.5",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
     "mongoose": "^6.3.2",
     "nodemailer": "^6.7.5",
     "pug": "^3.0.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "eslint": "^8.15.0"
+    "eslint": "^8.15.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.16"
+  },
+  "_moduleAliases": {
+    "@error": "./error"
   }
 }

@@ -1,5 +1,5 @@
 const { modelUser } = require('../dataBase');
-const { ApiError } = require('../error');
+const { ApiError } = require('@error');
 const { userValidator } = require('../validators');
 const { paramTypeEnum, fileType } = require('../constants');
 
