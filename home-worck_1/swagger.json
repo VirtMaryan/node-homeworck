@@ -1,0 +1,136 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Node-Js Documentation",
+    "version": "0.0.1",
+    "description": "HomeWork Node"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "description": " Get All Users",
+        "tags": [
+          "User"
+        ],
+        "operationId": "getAllUsres",
+        "responses": {
+          "200": {
+            "description": " Show all users from MongoDB",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OneUser"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error ",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "create new User",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "formData",
+            "default": "Marik",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "age",
+            "in": "formData",
+            "default": 18,
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "Authorization",
+            "in": "header",
+            "default": "",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "email",
+            "in": "formData",
+            "default": "",
+            "required": true,
+            "unique": true
+          }
+        ],
+        "operationId": "crateUser",
+        "responses": {
+          "200": {
+            "description": "user was created succsessfyl",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/OneUser"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error ",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "OneUser": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Maryan"
+        },
+        "age": {
+          "type": "number",
+          "example": 23
+        },
+        "password": {
+          "type": "string",
+          "example": "marik1231$"
+        },
+        "email": {
+          "type": "string",
+          "example": "marik123@gmail.com"
+        },
+        "gnder": {
+          "description": "Optional field, by defolt neuter",
+          "type": "string",
+          "example": "female"
+        }
+      }
+    },
+    "errorSchema": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Email is not valid"
+        },
+        "data": {
+          "description": "customer email",
+          "type": "string",
+          "example": "admin@inoxoft.com"
+        },
+        "customCode": {
+          "description": "Custom error",
+          "type": "number",
+          "example": 4001
+        }
+      }
+    }
+  }
+}

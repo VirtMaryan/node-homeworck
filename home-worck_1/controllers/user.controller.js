@@ -18,10 +18,10 @@ module.exports = {
       const count = await modelUser.count({});
 
       res.json({
-        page,
         perPage: limit,
-        data: users,
-        count
+        page,
+        count,
+        data: users
       });
 
     } catch (e) {

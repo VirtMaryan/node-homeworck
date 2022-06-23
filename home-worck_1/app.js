@@ -4,10 +4,12 @@ const { engine } = require('express-handlebars');
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const swaggerUI = require('swagger-ui-express');
 
 dotenv.config();
 
-const cronRun = require('./cron')
+const cronRun = require('./cron');
+const swaggerJSON = require('./swagger.json');
 const { PORT, MONGO_DB_URL, NODE_ENV } = require('./config/config');
 const { carRouter, logoutRouter, userRouter, welcomeRouter, authRouter } = require('./routes');
 const { ApiError } = require('@error');
@@ -34,6 +36,7 @@ app.use('/auth', authRouter);
 app.use('/cars', carRouter);
 app.use('/logout', logoutRouter);
 app.use('/users', userRouter);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJSON));
 app.use('*', _notFoundHandler);
 app.use(_mainErrorHandler);
 
