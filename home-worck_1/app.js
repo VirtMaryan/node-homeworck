@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const cronRun = require('./cron')
 const { PORT, MONGO_DB_URL, NODE_ENV } = require('./config/config');
 const { carRouter, logoutRouter, userRouter, welcomeRouter, authRouter } = require('./routes');
 const { ApiError } = require('@error');
@@ -40,6 +41,7 @@ function _notFoundHandler(req, res, next) {
   next(new ApiError('Not found', 404));
 }
 
+// eslint-disable-next-line no-unused-vars
 function _mainErrorHandler(err, req, res, next) {
   res
     .status(err.status || 500)
@@ -55,4 +57,6 @@ mongoose.connect(MONGO_DB_URL).then(() => {
 
 app.listen(PORT, () => {
   console.log(`App listen ${PORT} port `);
+
+  cronRun();
 })
