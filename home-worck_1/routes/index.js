@@ -3,5 +3,6 @@ module.exports = {
   logoutRouter: require('./logout.router'),
   userRouter: require('./user.router'),
   welcomeRouter: require('./welcomepage.router'),
-  authRouter: require('./auth.router')
+  authRouter: require('./auth.router'),
+  socketRouter: require('./socket.router')
 }

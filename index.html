@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TEST</title>
+
+	<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+		integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+		crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+	<button id="send">Send Message to one user</button>
+	<button id="broadcast">Send Message All user</button>
+	<button id="broadcastWithotMe">Send Message to All user without me</button>
+
+	<script>
+		const authTok = 'AuthToken';
+
+		const sendMes = document.getElementById('send');
+		const sendMesAll = document.getElementById('broadcast');
+		const sendMessAllWithoutMe = document.getElementById('broadcastWithotMe');
+
+		const socket = io('http://localhost:5000', { query: `token=${authTok}&user=Marik` });
+
+		sendMes.onclick = () => {
+			socket.emit('/message', { data: 'Добрий день everybody' });
+		};
+
+		sendMesAll.onclick = () => {
+			socket.emit('/message/send/all', {});
+		};
+
+		sendMessAllWithoutMe.onclick = () => {
+			socket.emit('/message/without/me', {});
+		};
+
+		socket.on('/message/save', (data) => {
+			console.log('******************');
+			console.log(data);
+			console.log('******************');
+		});
+
+		socket.on('/message/send/all/done', () => {
+			document.write('Everyone has this message');
+		});
+
+		socket.on('/message/without/me/done', () => {
+			document.write('Send message without me');
+		});
+
+		socket.on('/message/for/room', () => {
+			document.write('  This message has oly one   ')
+		});
+	</script>
+
+</body>
+
+</html>

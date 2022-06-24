@@ -1,20 +1,26 @@
 require('module-alias/register');
 const express = require('express');
+const http = require('http');
 const { engine } = require('express-handlebars');
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const swaggerUI = require('swagger-ui-express');
+const socketIO = require('socket.io');
 
 dotenv.config();
 
 const cronRun = require('./cron');
 const swaggerJSON = require('./swagger.json');
 const { PORT, MONGO_DB_URL, NODE_ENV } = require('./config/config');
-const { carRouter, logoutRouter, userRouter, welcomeRouter, authRouter } = require('./routes');
+const { carRouter, logoutRouter, userRouter, welcomeRouter, authRouter, socketRouter } = require('./routes');
 const { ApiError } = require('@error');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server, { cors: { origin: '*' } });
+
+io.on('connection', (socket) => socketRouter(io, socket));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -58,7 +64,7 @@ mongoose.connect(MONGO_DB_URL).then(() => {
   console.log(`Connection to ${MONGO_DB_URL} successfully`);
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`App listen ${PORT} port `);
 
   cronRun();

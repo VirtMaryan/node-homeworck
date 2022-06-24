@@ -3,5 +3,6 @@ module.exports = {
   logoutController: require('./logout.controller'),
   userController: require('./user.controller'),
   welcomeController: require('./welcomepage.controller'),
-  authController: require('./auth.controller')
+  authController: require('./auth.controller'),
+  socketController: require('./socket.conrtoller')
 }
