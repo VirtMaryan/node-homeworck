@@ -17,7 +17,7 @@ module.exports = (io, socket) => {
 
       socket.on('/message/without/me', () => socketController.sendMesWithoutMe(io, socket));
 
-      // return;
+      return next();
     }
     next();
   });

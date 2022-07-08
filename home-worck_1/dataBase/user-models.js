@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const { userGenderEnum } = require('../constants');
+const authService = require('../services/auth.services');
 
 const User = new Schema({
   name: {
@@ -31,6 +32,41 @@ const User = new Schema({
     select: false
   },
   brothers: {}
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  toJSON: { virtuals: true, transform: _userTransorm },
+  toObject: { virtuals: true, transform: _userTransorm }
+});
+
+User.virtual('fullName').get(function() {
+  return this.name
+});
+
+User.statics = {
+  async saveUserHashPassword(userToSave) {
+    const hashPassword = await authService.hashPassword(userToSave.password);
+
+    return this.create({ ...userToSave, password: hashPassword });
+  }
+};
+
+User.methods = {
+  chekIsPasswordSame(password) {
+    console.log(password);
+  },
+
+  toRepresentation() {
+    const user = this.toObject();
+    delete user.password;
+
+    return user;
+  }
+};
 
 module.exports = model('User', User)
+
+function _userTransorm(doc, ret) {
+  delete ret.password;
+
+  return ret;
+}
