@@ -1,29 +1,12 @@
 const { modelUser } = require('../dataBase');
-const { ApiError } = require('@error');
-const { authService, s3Service } = require('../services');
+const { s3Service, userService } = require('../services');
 
 module.exports = {
   getAllUsers: async (req, res, next) => {
     try {
-      const { limit = 20, page = 1 } = req.query;
+      const paginationRespon = await userService.getUserWithcount(req.query);
 
-      if (limit <= 0 || page <= 0) {
-        next(new ApiError('Limit or page not valid', 400));
-        return;
-      }
-
-      const skip = (page - 1) * limit;
-
-      const users = await modelUser.find().limit(limit).skip(skip);
-      const count = await modelUser.count({});
-
-      res.json({
-        perPage: limit,
-        page,
-        count,
-        data: users
-      });
-
+      res.json(paginationRespon);
     } catch (e) {
       next(e);
     }
@@ -39,8 +22,7 @@ module.exports = {
 
   createUser: async (req, res, next) => {
     try {
-      const hashPassword = await authService.hashPassword(req.body.password);
-      const createUser = await modelUser.create({ ...req.body, password: hashPassword });
+      const createUser = await modelUser.saveUserHashPassword(req.body);
 
       res.status(201).json(createUser);
     } catch (e) {
