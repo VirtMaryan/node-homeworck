@@ -12,6 +12,7 @@ dotenv.config();
 
 const cronRun = require('./cron');
 const swaggerJSON = require('./swagger.json');
+const { cacheService } = require('./services');
 const { PORT, MONGO_DB_URL, NODE_ENV } = require('./config/config');
 const { carRouter, logoutRouter, userRouter, welcomeRouter, authRouter, socketRouter } = require('./routes');
 const { ApiError } = require('@error');
@@ -64,8 +65,10 @@ mongoose.connect(MONGO_DB_URL).then(() => {
   console.log(`Connection to ${MONGO_DB_URL} successfully`);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`App listen ${PORT} port `);
+
+  await cacheService.client.connect();
 
   cronRun();
 })
