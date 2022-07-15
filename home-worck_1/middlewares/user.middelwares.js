@@ -121,11 +121,28 @@ const checkAvatarUser = (req, res, next) => {
   }
 };
 
+const checkPhoneDuplicate = async (req, res, next) => {
+  try {
+    const { phone } = req.body;
+    const phoneIsPresent = await modelUser.findOne({ phone: phone.trim() });
+
+    if (phoneIsPresent) {
+      next(new ApiError('User with this phone exists', 409));
+      return;
+    }
+
+    next();
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
   getUsreDynamiclly,
   checkEmailDuplicate,
   checkIsIDValid,
   validateUpdate,
   validateUser,
-  checkAvatarUser
+  checkAvatarUser,
+  checkPhoneDuplicate
 }

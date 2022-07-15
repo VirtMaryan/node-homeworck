@@ -8,7 +8,8 @@ const { cacheService } = require('../services');
 const userRouter = Router();
 
 userRouter.get('/', userController.getAllUsers);
-userRouter.post('/', userMiddlewars.validateUser, userMiddlewars.checkEmailDuplicate, userController.createUser);
+userRouter.post('/',
+  userMiddlewars.validateUser, userMiddlewars.checkEmailDuplicate, userMiddlewars.checkPhoneDuplicate, userController.createUser);
 
 userRouter.get('/redis/json', cacheService.redisCache.route({ expire: 3600 }), userController.getJSONusers);
 userRouter.get('/redis', userController.getUserFromRedsi);

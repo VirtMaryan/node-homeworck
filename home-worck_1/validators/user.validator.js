@@ -10,6 +10,7 @@ const userBroSubSchema = Joi.object({
 const joinUserSchema = Joi.object({
   name: Joi.string().alphanum().min(3).max(150).required().trim(),
   email: Joi.string().regex(constants.EMAIL_REGEXP).required().trim().lowercase(),
+  phone: Joi.string().regex(constants.PHONE_REGEXP).required().trim(),
   age: Joi.number().integer().min(1).max(130),
   gender: Joi.string().valid('female', 'male', 'neuter'),
   password: Joi.string().regex(constants.PASSWORD_REGEXP).required(),
